@@ -8,30 +8,30 @@
 </head>
 <body>
 
-  <div id="login-screen">
-    <h1>Finnlee Games System</h1>
-    <input id="username" type="text" placeholder="Benutzername" autocomplete="off" />
-    <input id="password" type="password" placeholder="Passwort" autocomplete="off" />
-    <button id="login-btn">Einloggen</button>
-    <p id="login-error" style="color:red; font-weight:bold;"></p>
-  </div>
+<div id="login-screen">
+  <h1>Finnlee Games System</h1>
+  <input id="username" type="text" placeholder="Benutzername" autocomplete="off" />
+  <input id="password" type="password" placeholder="Passwort" autocomplete="off" />
+  <button id="login-btn">Einloggen</button>
+  <p id="login-error" style="color:red; font-weight:bold;"></p>
+</div>
 
-  <div id="desktop" class="hidden">
-    <h2>Willkommen, <span id="user-display"></span></h2>
-    <div id="icons">
-      <div class="icon" onclick="openApp('peckman')">🟡<br/>Peckman</div>
-      <div class="icon" onclick="openApp('freunde')">🤗<br/>Freunde</div>
-      <div class="icon" onclick="openApp('settings')">⚙️<br/>Einstellungen</div>
-      <div class="icon" onclick="openApp('gamehub')">🎮<br/>Game Hub</div>
-      <div class="icon" onclick="openApp('admin')">🔧<br/>Admin App</div>
-      <div class="icon" onclick="openApp('owner')">👑<br/>Owner App</div>
-    </div>
+<div id="desktop" class="hidden">
+  <h2>Willkommen, <span id="user-display"></span></h2>
+  <div id="icons">
+    <div class="icon" onclick="openApp('peckman')">🟡<br/>Peckman</div>
+    <div class="icon" onclick="openApp('freunde')">🤗<br/>Freunde</div>
+    <div class="icon" onclick="openApp('settings')">⚙️<br/>Einstellungen</div>
+    <div class="icon" onclick="openApp('gamehub')">🎮<br/>Game Hub</div>
+    <div class="icon" onclick="openApp('admin')">🔧<br/>Admin App</div>
+    <div class="icon" onclick="openApp('owner')">👑<br/>Owner App</div>
   </div>
+</div>
 
-  <div id="app-window" class="hidden">
-    <button id="close-app" title="Schließen">✖</button>
-    <div id="app-content"></div>
-  </div>
+<div id="app-window" class="hidden">
+  <button id="close-app" title="Schließen">✖</button>
+  <div id="app-content"></div>
+</div>
 
 <script src="script.js"></script>
 </body>
