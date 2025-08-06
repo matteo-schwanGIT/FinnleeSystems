@@ -1,38 +1,145 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Finnlee Games System</title>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Finnlee Games System</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-<div id="login-screen">
-  <h1>Finnlee Games System</h1>
-  <input id="username" type="text" placeholder="Benutzername" autocomplete="off" />
-  <input id="password" type="password" placeholder="Passwort" autocomplete="off" />
-  <button id="login-btn">Einloggen</button>
-  <p id="login-error" style="color:red; font-weight:bold;"></p>
-</div>
-
-<div id="desktop" class="hidden">
-  <h2>Willkommen, <span id="user-display"></span></h2>
-  <div id="icons">
-    <div class="icon" onclick="openApp('peckman')">🟡<br/>Peckman</div>
-    <div class="icon" onclick="openApp('freunde')">🤗<br/>Freunde</div>
-    <div class="icon" onclick="openApp('settings')">⚙️<br/>Einstellungen</div>
-    <div class="icon" onclick="openApp('gamehub')">🎮<br/>Game Hub</div>
-    <div class="icon" onclick="openApp('admin')">🔧<br/>Admin App</div>
-    <div class="icon" onclick="openApp('owner')">👑<br/>Owner App</div>
+  <div id="login-screen" class="screen">
+    <h1>
+      <span class="blink-green">Finnlee</span>
+      <span class="blink-blue">Games</span>
+    </h1>
+    <p class="red-text">by Matteo</p>
+    <input type="text" id="username" placeholder="Benutzername" autocomplete="off" />
+    <input type="password" id="password" placeholder="Passwort" autocomplete="off" />
+    <button id="login-btn">Einloggen</button>
+    <p id="maintenance-msg" class="red-text" style="display:none;">
+      Wartungsmodus aktiviert. Nur Admins und Owner können sich einloggen.
+    </p>
+    <p id="forgot-password" class="red-text clickable">- Passwort vergessen? -</p>
+    <p id="login-error" class="red-text" style="display:none;">Benutzername oder Passwort falsch.</p>
   </div>
-</div>
 
-<div id="app-window" class="hidden">
-  <button id="close-app" title="Schließen">✖</button>
-  <div id="app-content"></div>
-</div>
+  <div id="desktop" class="screen" style="display:none;">
+    <div class="top-left-text">Finnlee OS</div>
+    <div class="top-right-text" id="welcome-text"></div>
+    <div id="app-icons" class="app-icons">
+      <div class="app-icon" data-app="friends">
+        <span>👫</span><br />
+        Freunde
+      </div>
+      <div class="app-icon" data-app="settings">
+        <span>⚙️</span><br />
+        Einstellungen
+      </div>
+      <div class="app-icon" data-app="gamehub">
+        <span>🎮</span><br />
+        Game Hub
+      </div>
+      <div class="app-icon" data-app="adminapp" style="display:none;">
+        <span>🛠️</span><br />
+        Admin App
+      </div>
+      <div class="app-icon" data-app="ownerapp" style="display:none;">
+        <span>👑</span><br />
+        Owner App
+      </div>
+    </div>
+  </div>
 
-<script src="script.js"></script>
+  <!-- Apps -->
+  <div id="app-container" style="display:none;">
+    <button id="close-app" title="Zurück zum Desktop">❌</button>
+
+    <div id="friends-app" class="app" style="display:none;">
+      <h2>Freunde</h2>
+      <input type="text" id="friend-username" placeholder="Freund hinzufügen" autocomplete="off" />
+      <button id="add-friend-btn">Hinzufügen</button>
+      <ul id="friend-list"></ul>
+      <h3>Einladungen</h3>
+      <ul id="friend-invites"></ul>
+    </div>
+
+    <div id="settings-app" class="app" style="display:none;">
+      <h2>Einstellungen</h2>
+      <label>Benutzername:</label>
+      <input type="text" id="settings-username" autocomplete="off" />
+      <label>Passwort:</label>
+      <input type="password" id="settings-password" autocomplete="off" />
+      <label>Hintergrundfarbe:</label>
+      <input type="color" id="settings-bgcolor" />
+      <button id="save-settings-btn">Speichern</button>
+    </div>
+
+    <div id="gamehub-app" class="app" style="display:none;">
+      <h2>Game Hub</h2>
+      <div class="game-icon" data-game="tictactoe">⭕❌ Tic Tac Toe</div>
+      <div class="game-icon" data-game="peckman">👻 Peckman</div>
+      <div class="game-icon" data-game="fakeminecraft">🧱 Fake Minecraft</div>
+      <div class="game-icon" data-game="fakeclashroyale">🏰 Fake Clash Royale</div>
+      <div class="game-icon" data-game="fakefortnite">🏹 Fake Fortnite</div>
+    </div>
+
+    <div id="adminapp" class="app" style="display:none;">
+      <h2>Admin App</h2>
+      <button id="toggle-maintenance-btn">Wartungsmodus Ein/Aus</button>
+      <h3>Benutzer bannen</h3>
+      <input type="text" id="ban-username" placeholder="Benutzername" autocomplete="off" />
+      <button id="ban-btn">Bannen</button>
+      <h3>Benutzer entbannen</h3>
+      <input type="text" id="unban-username" placeholder="Benutzername" autocomplete="off" />
+      <button id="unban-btn">Entbannen</button>
+      <h3>Gebannte Benutzer</h3>
+      <ul id="banned-users-list"></ul>
+    </div>
+
+    <div id="ownerapp" class="app" style="display:none;">
+      <h2>Owner App</h2>
+      <button id="broadcast-btn">Update an alle senden</button>
+      <textarea id="broadcast-msg" placeholder="Nachricht eingeben..."></textarea>
+      <h3>Admins verwalten</h3>
+      <input type="text" id="add-admin-username" placeholder="Admin hinzufügen" autocomplete="off" />
+      <button id="add-admin-btn">Hinzufügen</button>
+      <input type="text" id="remove-admin-username" placeholder="Admin entfernen" autocomplete="off" />
+      <button id="remove-admin-btn">Entfernen</button>
+      <h3>Konsole</h3>
+      <textarea id="owner-console" readonly></textarea>
+      <input type="text" id="owner-console-input" placeholder="Befehl eingeben..." autocomplete="off" />
+      <button id="owner-console-send">Senden</button>
+    </div>
+
+    <!-- Spiele Container -->
+    <div id="games-container" style="display:none;">
+      <!-- Tic Tac Toe -->
+      <div id="tictactoe-game" class="game" style="display:none;">
+        <h2>Tic Tac Toe</h2>
+        <div id="tictactoe-board" class="tic-board"></div>
+        <button id="tictactoe-reset">Neu starten</button>
+        <div id="tictactoe-status"></div>
+      </div>
+
+      <!-- Peckman -->
+      <div id="peckman-game" class="game" style="display:none;">
+        <h2>Peckman</h2>
+        <canvas id="peckman-canvas" width="400" height="400"></canvas>
+        <button id="peckman-reset">Neu starten</button>
+        <div id="peckman-score">Punkte: 0</div>
+      </div>
+
+      <!-- Fake Minecraft -->
+      <div id="fakeminecraft-game" class="game" style="display:none;">
+        <h2>Fake Minecraft</h2>
+        <canvas id="minecraft-canvas" width="400" height="400" style="border:1px solid #ccc;"></canvas>
+        <button id="minecraft-reset">Neu starten</button>
+      </div>
+
+      <!-- Placeholder für weitere Spiele -->
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
