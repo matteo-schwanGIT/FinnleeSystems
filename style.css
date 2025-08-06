@@ -1,63 +1,73 @@
+/* Hintergrund mit Sonnenuntergang und Bergen */
 body {
-  background: linear-gradient(to bottom, #001a00 0%, #004d00 100%);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #b3ffb3;
   margin: 0; padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background:
+    linear-gradient(to top, #FF6E40 0%, #FFA726 70%, #FFF59D 100%),
+    radial-gradient(circle at 25% 80%, #004400 300px, transparent 300px),
+    radial-gradient(circle at 50% 90%, #003300 300px, transparent 300px),
+    radial-gradient(circle at 75% 80%, #004400 300px, transparent 300px);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  color: #b3ffb3;
   user-select: none;
 }
 
-.hidden {
-  display: none;
-}
-
+/* Login Screen */
 #login-screen {
-  max-width: 300px;
-  margin: 80px auto;
-  padding: 20px;
-  background: #003300;
+  max-width: 320px;
+  margin: 100px auto;
+  padding: 30px;
+  background: rgba(0, 51, 0, 0.85);
+  border-radius: 12px;
   border: 3px solid #00ff00;
-  border-radius: 10px;
+  box-shadow: 0 0 20px #00ff00;
   text-align: center;
-  box-shadow: 0 0 10px #00ff00;
 }
 
 #login-screen input {
   width: 90%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 2px solid limegreen;
-  border-radius: 5px;
+  padding: 12px;
+  margin: 12px 0;
+  border: 3px solid #00ff00;
+  border-radius: 8px;
   background: black;
   color: limegreen;
-  font-weight: bold;
-  font-size: 1em;
+  font-weight: 700;
+  font-size: 1.1em;
   outline: none;
+  box-shadow: 0 0 10px #00ff00;
   transition: box-shadow 0.3s ease;
-  box-shadow: 0 0 8px limegreen;
 }
 
 #login-screen input:focus {
-  box-shadow: 0 0 15px #00ff00;
+  box-shadow: 0 0 20px #00ff00;
   border-color: #00ff00;
 }
 
 #login-btn {
-  padding: 10px 20px;
+  width: 95%;
+  padding: 14px;
   background: limegreen;
   border: none;
-  border-radius: 5px;
-  font-weight: bold;
+  font-weight: 800;
+  font-size: 1.1em;
+  border-radius: 8px;
   cursor: pointer;
-  box-shadow: 0 0 8px limegreen;
+  box-shadow: 0 0 15px limegreen;
+  transition: background 0.3s ease;
 }
 
 #login-btn:hover {
   background: #00cc00;
 }
 
+/* Desktop */
 #desktop {
   padding: 20px;
   text-align: center;
+  user-select: none;
 }
 
 #icons {
@@ -71,39 +81,63 @@ body {
 .icon {
   width: 90px;
   height: 90px;
-  background: #003300;
+  background: rgba(0, 51, 0, 0.85);
   border: 2px solid limegreen;
-  border-radius: 15px;
-  box-shadow: 0 0 10px limegreen;
+  border-radius: 20px;
+  box-shadow: 0 0 12px limegreen;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   color: limegreen;
-  font-size: 1.6em;
+  font-size: 1.7em;
   cursor: pointer;
   user-select: none;
   transition: background 0.3s ease;
+  font-weight: 700;
 }
 
 .icon:hover {
   background: #006600;
 }
 
+/* App Fenster */
 #app-window {
   position: fixed;
-  top: 50px;
+  top: 40px;
   left: 50%;
   transform: translateX(-50%);
-  width: 420px;
-  height: 480px;
-  background: #002200;
+  width: 480px;
+  height: 540px;
+  background: rgba(0, 51, 0, 0.95);
   border: 3px solid limegreen;
-  border-radius: 10px;
-  box-shadow: 0 0 20px limegreen;
-  padding: 40px 20px 20px 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 30px limegreen;
+  padding: 50px 20px 20px 20px;
   color: limegreen;
   overflow: auto;
-  z-index: 1000;
+  z-index: 10000;
   user-select: none;
+}
+
+#close-app {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-weight: 900;
+  user-select: none;
+}
+
+/* Canvas Styles */
+#peckman-canvas {
+  background: black;
+  display: block;
+  margin: 10px auto;
+  border: 3px solid limegreen;
+  border-radius: 12px;
 }
