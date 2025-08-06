@@ -1,0 +1,44 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb') no-repeat center center fixed;
+  background-size: cover;
+  color: white;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+#startscreen {
+  margin-top: 30vh;
+  animation: fadeOut 3s forwards;
+}
+
+@keyframes fadeOut {
+  0% {opacity: 1;}
+  90% {opacity: 1;}
+  100% {opacity: 0; display: none;}
+}
+
+.desktop-icons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.icon {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid white;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
+  width: 100px;
+  cursor: pointer;
+}
+
+#error {
+  color: red;
+}
