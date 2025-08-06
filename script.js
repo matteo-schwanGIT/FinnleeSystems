@@ -1,4 +1,3 @@
-// Benutzerliste (fest definiert)
 const users = [
   { username: "OwnerMatteo", password: "finnlee123", role: "owner" },
   { username: "AdminBea", password: "2025!Admin", role: "admin" },
@@ -16,7 +15,6 @@ const loginBtn = document.getElementById("login-btn");
 const loginError = document.getElementById("login-error");
 const closeAppBtn = document.getElementById("close-app");
 
-// Login Event
 loginBtn.addEventListener("click", () => {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
@@ -28,13 +26,6 @@ loginBtn.addEventListener("click", () => {
     return;
   }
 
-  // Wartungsmodus (optional)
-  const maintenanceMode = false;
-  if (maintenanceMode && user.role === "player") {
-    loginError.textContent = "Wartungsmodus aktiv – nur Admin/Owner können rein.";
-    return;
-  }
-
   currentUser = user;
   userDisplay.textContent = currentUser.username;
 
@@ -43,7 +34,6 @@ loginBtn.addEventListener("click", () => {
   loginError.textContent = "";
 });
 
-// Desktop App öffnen
 function openApp(appName) {
   if (!currentUser) return;
 
@@ -51,7 +41,6 @@ function openApp(appName) {
     alert("Nur Admins und Owner können die Admin App öffnen.");
     return;
   }
-
   if (appName === "owner" && currentUser.role !== "owner") {
     alert("Nur der Owner kann die Owner App öffnen.");
     return;
@@ -82,13 +71,11 @@ function openApp(appName) {
   }
 }
 
-// App schließen
 closeAppBtn.addEventListener("click", () => {
   appWindow.classList.add("hidden");
   appContent.innerHTML = "";
 });
 
-// Admin App (nur Owner/Admin)
 function adminApp() {
   appContent.innerHTML = `
     <h3>Admin App</h3>
@@ -100,7 +87,6 @@ function adminApp() {
   `;
 }
 
-// Owner App (nur Owner)
 function ownerApp() {
   appContent.innerHTML = `
     <h3>Owner App</h3>
@@ -112,7 +98,7 @@ function ownerApp() {
   `;
 }
 
-// --------- Peckman Spiel ---------
+// ------------------ Peckman -------------------
 function peckmanApp() {
   appContent.innerHTML = `
     <canvas id="peckman-canvas" width="400" height="400"></canvas>
@@ -124,22 +110,106 @@ function peckmanApp() {
   const ctx = canvas.getContext("2d");
 
   const tileSize = 20;
-  const rows = 17;
+  const rows = 20;
   const cols = 20;
 
-  // Level Matrix (1=Wand, 2=Punkt, 0=leer)
   let level = [
+    // 1=Wand, 2=Punkt, 0=leer
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,2,2,2,2,1,2,2,2,2,2,2,2,1,2,2,2,2,2,1],
-    [1,2,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,1,2,1],
-    [1,2,1,1,2,1,2,2,2,2,2,1,2,1,2,1,1,1,2,1],
-    [1,2,2,2,2,2,2,1,1,0,1,1,2,2,2,2,2,2,2,1],
-    [1,2,1,1,2,1,2,1,0,0,0,1,2,1,2,1,1,1,2,1],
-    [1,2,2,1,2,1,2,1,0,1,0,1,2,1,2,2,2,2,2,1],
-    [1,1,2,1,2,1,2,1,0,1,0,1,2,1,2,1,1,1,2,1],
-    [1,2,2,2,2,2,2,2,0,0,0,2,2,2,2,1,1,2,2,1],
-    [1,2,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,1,2,1],
-    [1,2,2,1,2,2,2,1,0,0,0,1,2,1,2,2,2,2,2,1],
-    [1,1,2,1,2,1,1,1,0,1,0,1,2,1,1,1,2,1,1,1],
-    [1,2,2,2,2,1,2,2,0,1,0,2,2,2,2,1,2,2,2,1],
-    [1,2,1,1,2,1,2,1,0,0,0,1,2,1,2,1,1
+    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+    [1,2,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,2,1],
+    [1,2,1,0,0,1,2,1,0,0,0,0,0,1,2,1,0,1,2,1],
+    [1,2,1,0,0,1,2,1,0,1,1,1,0,1,2,1,0,1,2,1],
+    [1,2,1,0,0,0,2,1,0,1,0,1,0,1,2,1,0,1,2,1],
+    [1,2,1,1,1,1,2,1,0,1,0,1,0,1,2,1,1,1,2,1],
+    [1,2,2,2,2,2,2,2,0,1,0,1,0,2,2,2,2,2,2,1],
+    [1,2,1,1,1,1,2,1,0,1,0,1,0,1,1,1,1,1,2,1],
+    [1,2,2,2,2,1,2,1,0,0,0,0,0,1,2,2,2,2,2,1],
+    [1,1,1,1,2,1,2,1,1,1,1,1,0,1,2,1,1,1,1,1],
+    [1,2,2,1,2,1,2,2,2,2,2,1,0,1,2,1,2,2,2,1],
+    [1,2,1,1,2,1,1,1,1,1,2,1,0,1,2,1,1,1,2,1],
+    [1,2,2,2,2,2,2,2,2,1,2,2,0,2,2,2,2,2,2,1],
+    [1,2,1,1,1,1,1,1,2,1,1,1,0,1,1,1,1,1,2,1],
+    [1,2,2,2,2,2,2,1,2,2,2,2,0,2,2,2,2,2,2,1],
+    [1,1,1,1,1,1,2,1,1,1,1,1,0,1,1,1,1,1,1,1],
+    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+    [1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+  ];
+
+  let pacman = {x:1, y:1, dir: 'right'};
+  let score = 0;
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for(let y=0; y<rows; y++) {
+      for(let x=0; x<cols; x++) {
+        let tile = level[y][x];
+        if(tile === 1) {
+          ctx.fillStyle = 'blue';
+          ctx.fillRect(x*tileSize, y*tileSize, tileSize, tileSize);
+        } else if(tile === 2) {
+          ctx.fillStyle = 'white';
+          ctx.beginPath();
+          ctx.arc(x*tileSize + tileSize/2, y*tileSize + tileSize/2, 4, 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+    }
+
+    // Pacman zeichnen
+    ctx.fillStyle = 'yellow';
+    ctx.beginPath();
+    ctx.arc(pacman.x*tileSize + tileSize/2, pacman.y*tileSize + tileSize/2, tileSize/2 - 2, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  function canMove(x,y) {
+    return level[y] && level[y][x] !== 1;
+  }
+
+  function movePacman() {
+    let nx = pacman.x;
+    let ny = pacman.y;
+
+    switch(pacman.dir) {
+      case 'up': ny--; break;
+      case 'down': ny++; break;
+      case 'left': nx--; break;
+      case 'right': nx++; break;
+    }
+
+    if(canMove(nx, ny)) {
+      pacman.x = nx;
+      pacman.y = ny;
+
+      if(level[ny][nx] === 2) {
+        level[ny][nx] = 0;
+        score++;
+        document.getElementById('peckman-score').textContent = score;
+      }
+    }
+  }
+
+  window.onkeydown = e => {
+    switch(e.key) {
+      case 'ArrowUp': pacman.dir = 'up'; break;
+      case 'ArrowDown': pacman.dir = 'down'; break;
+      case 'ArrowLeft': pacman.dir = 'left'; break;
+      case 'ArrowRight': pacman.dir = 'right'; break;
+    }
+  };
+
+  function gameLoop() {
+    movePacman();
+    draw();
+  }
+
+  score = 0;
+  document.getElementById('peckman-score').textContent = score;
+  draw();
+
+  clearInterval(window.peckmanInterval);
+  window.peckmanInterval = setInterval(gameLoop, 200);
+}
