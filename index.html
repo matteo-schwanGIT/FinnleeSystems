@@ -7,12 +7,13 @@
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
   <div id="login-screen">
     <h1>Finnlee Games System</h1>
-    <input id="username" type="text" placeholder="Benutzername" />
-    <input id="password" type="password" placeholder="Passwort" />
+    <input id="username" type="text" placeholder="Benutzername" autocomplete="off" />
+    <input id="password" type="password" placeholder="Passwort" autocomplete="off" />
     <button id="login-btn">Einloggen</button>
-    <p id="login-error" style="color:red;"></p>
+    <p id="login-error" style="color:red; font-weight:bold;"></p>
   </div>
 
   <div id="desktop" class="hidden">
@@ -28,7 +29,7 @@
   </div>
 
   <div id="app-window" class="hidden">
-    <button id="close-app" title="Schließen" style="position:absolute;top:5px;right:5px;font-size:20px;background:none;border:none;color:red;cursor:pointer;">✖</button>
+    <button id="close-app" title="Schließen">✖</button>
     <div id="app-content"></div>
   </div>
 
