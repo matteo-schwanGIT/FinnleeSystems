@@ -1,41 +1,37 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Finnlee System</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Finnlee Games System</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="startscreen">
-    <h1>Finnlee System</h1>
-    <p>by Matteo</p>
-  </div>
-
-  <div id="login-screen" class="hidden">
-    <input type="text" id="username" placeholder="Benutzername" />
-    <input type="password" id="password" placeholder="Passwort" />
-    <button onclick="login()">Login</button>
-    <p id="login-error" class="error"></p>
+  <div id="login-screen">
+    <h1>Finnlee Games System</h1>
+    <input id="username" type="text" placeholder="Benutzername" />
+    <input id="password" type="password" placeholder="Passwort" />
+    <button id="login-btn">Einloggen</button>
+    <p id="login-error" style="color:red;"></p>
   </div>
 
   <div id="desktop" class="hidden">
-    <h2>Willkommen, <span id="welcome-name"></span>!</h2>
-    <div class="desktop-icons">
-      <div class="icon" onclick="openApp('os')">🖥️<br/>OS</div>
-      <div class="icon" onclick="openApp('admin')">🛠️<br/>Admin</div>
-      <div class="icon" onclick="openApp('owner')">📟<br/>Konsole</div>
-      <div class="icon" onclick="openApp('ttt')">⭕❌<br/>TicTacToe</div>
-      <div class="icon" onclick="openApp('minecraft')">🧱<br/>Fake MC</div>
+    <h2>Willkommen, <span id="user-display"></span></h2>
+    <div id="icons">
       <div class="icon" onclick="openApp('peckman')">🟡<br/>Peckman</div>
+      <div class="icon" onclick="openApp('freunde')">🤗<br/>Freunde</div>
+      <div class="icon" onclick="openApp('settings')">⚙️<br/>Einstellungen</div>
+      <div class="icon" onclick="openApp('gamehub')">🎮<br/>Game Hub</div>
+      <div class="icon" onclick="openApp('admin')">🔧<br/>Admin App</div>
+      <div class="icon" onclick="openApp('owner')">👑<br/>Owner App</div>
     </div>
   </div>
 
   <div id="app-window" class="hidden">
+    <button id="close-app" title="Schließen" style="position:absolute;top:5px;right:5px;font-size:20px;background:none;border:none;color:red;cursor:pointer;">✖</button>
     <div id="app-content"></div>
-    <button onclick="closeApp()">Schließen</button>
   </div>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
