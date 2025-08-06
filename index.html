@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Finnlee System</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="startscreen">
+    <h1>Finnlee System</h1>
+    <p>by Matteo</p>
+  </div>
+
+  <div id="login-screen" class="hidden">
+    <input type="text" id="username" placeholder="Benutzername" />
+    <input type="password" id="password" placeholder="Passwort" />
+    <button onclick="login()">Login</button>
+    <p id="login-error" class="error"></p>
+  </div>
+
+  <div id="desktop" class="hidden">
+    <h2>Willkommen, <span id="welcome-name"></span>!</h2>
+    <div class="desktop-icons">
+      <div class="icon" onclick="openApp('os')">🖥️<br/>OS</div>
+      <div class="icon" onclick="openApp('admin')">🛠️<br/>Admin</div>
+      <div class="icon" onclick="openApp('owner')">📟<br/>Konsole</div>
+      <div class="icon" onclick="openApp('ttt')">⭕❌<br/>TicTacToe</div>
+      <div class="icon" onclick="openApp('minecraft')">🧱<br/>Fake MC</div>
+      <div class="icon" onclick="openApp('peckman')">🟡<br/>Peckman</div>
+    </div>
+  </div>
+
+  <div id="app-window" class="hidden">
+    <div id="app-content"></div>
+    <button onclick="closeApp()">Schließen</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
