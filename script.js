@@ -1,215 +1,312 @@
-const users = [
-  { username: "OwnerMatteo", password: "finnlee123", role: "owner" },
-  { username: "AdminBea", password: "2025!Admin", role: "admin" },
-  { username: "Player1", password: "playerpass", role: "player" }
+    // --- Daten & Globals ---
+let users = [
+  { username: "OwnerMatteo", password: "finnlee123", role: "owner", banned: false },
+  { username: "AdminBea", password: "2025!Admin", role: "admin", banned: false },
+  { username: "PlayerMax", password: "maxpass", role: "player", banned: false },
 ];
 
+let maintenanceMode = false;
 let currentUser = null;
+let friends = {};
+let friendInvites = {};
+let bannedUsers = new Set();
 
+// --- Utils ---
+function saveUsers() {
+  localStorage.setItem("finnleeUsers", JSON.stringify(users));
+}
+function loadUsers() {
+  const stored = localStorage.getItem("finnleeUsers");
+  if (stored) users = JSON.parse(stored);
+}
+function saveBanned() {
+  localStorage.setItem("finnleeBanned", JSON.stringify(Array.from(bannedUsers)));
+}
+function loadBanned() {
+  const stored = localStorage.getItem("finnleeBanned");
+  if (stored) bannedUsers = new Set(JSON.parse(stored));
+}
+function isBanned(username) {
+  return bannedUsers.has(username);
+}
+function saveFriends() {
+  localStorage.setItem("finnleeFriends", JSON.stringify(friends));
+}
+function loadFriends() {
+  const stored = localStorage.getItem("finnleeFriends");
+  if (stored) friends = JSON.parse(stored);
+}
+function saveFriendInvites() {
+  localStorage.setItem("finnleeFriendInvites", JSON.stringify(friendInvites));
+}
+function loadFriendInvites() {
+  const stored = localStorage.getItem("finnleeFriendInvites");
+  if (stored) friendInvites = JSON.parse(stored);
+}
+
+// --- Init ---
+loadUsers();
+loadBanned();
+loadFriends();
+loadFriendInvites();
+
+// --- Login ---
 const loginScreen = document.getElementById("login-screen");
 const desktop = document.getElementById("desktop");
-const appWindow = document.getElementById("app-window");
-const appContent = document.getElementById("app-content");
-const userDisplay = document.getElementById("user-display");
+const appContainer = document.getElementById("app-container");
 const loginBtn = document.getElementById("login-btn");
+const usernameInput = document.getElementById("username");
+const passwordInput = document.getElementById("password");
 const loginError = document.getElementById("login-error");
-const closeAppBtn = document.getElementById("close-app");
+const maintenanceMsg = document.getElementById("maintenance-msg");
+const forgotPassword = document.getElementById("forgot-password");
+const welcomeText = document.getElementById("welcome-text");
+const appIcons = document.getElementById("app-icons");
 
 loginBtn.addEventListener("click", () => {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
-
-  const user = users.find(u => u.username === username && u.password === password);
-
-  if (!user) {
-    loginError.textContent = "Benutzername oder Passwort falsch!";
+  const uname = usernameInput.value.trim();
+  const pwd = passwordInput.value.trim();
+  if (!uname || !pwd) {
+    loginError.style.display = "block";
+    loginError.textContent = "Bitte Benutzername und Passwort eingeben.";
     return;
   }
-
+  const user = users.find(u => u.username === uname);
+  if (!user || user.password !== pwd) {
+    loginError.style.display = "block";
+    loginError.textContent = "Benutzername oder Passwort falsch.";
+    return;
+  }
+  if (isBanned(uname)) {
+    loginError.style.display = "block";
+    loginError.textContent = "Du bist gebannt.";
+    return;
+  }
+  if (maintenanceMode && !["admin","owner"].includes(user.role)) {
+    maintenanceMsg.style.display = "block";
+    return;
+  }
   currentUser = user;
-  userDisplay.textContent = currentUser.username;
+  loginScreen.style.display = "none";
+  desktop.style.display = "flex";
+  welcomeText.textContent = `Hallo, ${currentUser.username}!`;
+  loginError.style.display = "none";
+  maintenanceMsg.style.display = "none";
 
-  loginScreen.classList.add("hidden");
-  desktop.classList.remove("hidden");
-  loginError.textContent = "";
+  // Zeige Admin oder Owner Apps wenn Rolle passt
+  document.querySelector("[data-app='adminapp']").style.display = currentUser.role === "admin" || currentUser.role === "owner" ? "flex" : "none";
+  document.querySelector("[data-app='ownerapp']").style.display = currentUser.role === "owner" ? "flex" : "none";
+
+  // Init Friends List etc.
+  refreshFriendsList();
+  refreshFriendInvites();
+  refreshBannedList();
+});
+
+// Passwort vergessen
+forgotPassword.addEventListener("click", () => {
+  alert("Eine Nachricht wurde an Admin und Owner gesendet, dass du dein Passwort vergessen hast.");
+  // In echtem System würde hier Nachricht an Admin/Owner verschickt werden
+});
+
+// --- Desktop & Apps ---
+appIcons.addEventListener("click", e => {
+  const appIcon = e.target.closest(".app-icon");
+  if (!appIcon) return;
+  const app = appIcon.getAttribute("data-app");
+  openApp(app);
+});
+
+const closeAppBtn = document.getElementById("close-app");
+closeAppBtn.addEventListener("click", () => {
+  appContainer.style.display = "none";
+  hideAllApps();
+  desktop.style.display = "flex";
 });
 
 function openApp(appName) {
-  if (!currentUser) return;
-
-  if (appName === "admin" && !["admin", "owner"].includes(currentUser.role)) {
-    alert("Nur Admins und Owner können die Admin App öffnen.");
-    return;
-  }
-  if (appName === "owner" && currentUser.role !== "owner") {
-    alert("Nur der Owner kann die Owner App öffnen.");
-    return;
-  }
-
-  appWindow.classList.remove("hidden");
-  switch (appName) {
-    case "peckman":
-      peckmanApp();
-      break;
-    case "freunde":
-      appContent.innerHTML = "<p>Freundes-App kommt bald.</p>";
-      break;
-    case "settings":
-      appContent.innerHTML = "<p>Einstellungen kommen bald.</p>";
-      break;
-    case "gamehub":
-      appContent.innerHTML = "<p>Game Hub kommt bald.</p>";
-      break;
-    case "admin":
-      adminApp();
-      break;
-    case "owner":
-      ownerApp();
-      break;
-    default:
-      appContent.innerHTML = `<p>App "${appName}" ist noch in Arbeit.</p>`;
+  desktop.style.display = "none";
+  appContainer.style.display = "block";
+  hideAllApps();
+  if (appName === "friends") {
+    document.getElementById("friends-app").style.display = "block";
+  } else if (appName === "settings") {
+    document.getElementById("settings-app").style.display = "block";
+    document.getElementById("settings-username").value = currentUser.username;
+    document.getElementById("settings-password").value = currentUser.password;
+    document.getElementById("settings-bgcolor").value = "#000000"; // default black, kann man erweitern
+  } else if (appName === "gamehub") {
+    document.getElementById("gamehub-app").style.display = "block";
+  } else if (appName === "adminapp") {
+    document.getElementById("adminapp").style.display = "block";
+  } else if (appName === "ownerapp") {
+    document.getElementById("ownerapp").style.display = "block";
   }
 }
 
-closeAppBtn.addEventListener("click", () => {
-  appWindow.classList.add("hidden");
-  appContent.innerHTML = "";
+function hideAllApps() {
+  document.querySelectorAll(".app").forEach(app => (app.style.display = "none"));
+  hideAllGames();
+}
+
+// --- Freunde App ---
+const addFriendBtn = document.getElementById("add-friend-btn");
+const friendUsernameInput = document.getElementById("friend-username");
+const friendListEl = document.getElementById("friend-list");
+const friendInvitesEl = document.getElementById("friend-invites");
+
+addFriendBtn.addEventListener("click", () => {
+  const friendName = friendUsernameInput.value.trim();
+  if (!friendName) return alert("Bitte gib einen Benutzernamen ein.");
+  if (friendName === currentUser.username) return alert("Du kannst dich nicht selbst als Freund hinzufügen.");
+  const friendUser = users.find(u => u.username === friendName);
+  if (!friendUser) return alert("Benutzer nicht gefunden.");
+  if (!friends[currentUser.username]) friends[currentUser.username] = [];
+  if (friends[currentUser.username].includes(friendName)) return alert("Benutzer ist bereits dein Freund.");
+  // Sende Einladung
+  if (!friendInvites[friendName]) friendInvites[friendName] = [];
+  friendInvites[friendName].push(currentUser.username);
+  saveFriendInvites();
+  alert("Freundschaftsanfrage gesendet.");
+  refreshFriendInvites();
+  friendUsernameInput.value = "";
 });
 
-function adminApp() {
-  appContent.innerHTML = `
-    <h3>Admin App</h3>
-    <p>Verwalte Benutzer, Spiele und mehr.</p>
-    <ul>
-      <li>Feature 1: Benutzer sperren (kommt bald)</li>
-      <li>Feature 2: Wartungsmodus (kommt bald)</li>
-    </ul>
-  `;
+function refreshFriendsList() {
+  friendListEl.innerHTML = "";
+  const userFriends = friends[currentUser.username] || [];
+  userFriends.forEach(f => {
+    const li = document.createElement("li");
+    li.textContent = f;
+    friendListEl.appendChild(li);
+  });
 }
 
-function ownerApp() {
-  appContent.innerHTML = `
-    <h3>Owner App</h3>
-    <p>Spezialfunktionen für den Owner.</p>
-    <ul>
-      <li>Admins verwalten (kommt bald)</li>
-      <li>Broadcast Nachrichten senden (kommt bald)</li>
-    </ul>
-  `;
+function refreshFriendInvites() {
+  friendInvitesEl.innerHTML = "";
+  const invites = friendInvites[currentUser.username] || [];
+  invites.forEach(inviter => {
+    const li = document.createElement("li");
+    li.textContent = `${inviter} möchte dein Freund sein.`;
+    const acceptBtn = document.createElement("button");
+    acceptBtn.textContent = "Annehmen";
+    acceptBtn.onclick = () => {
+      // Freundschaft hinzufügen
+      if (!friends[currentUser.username]) friends[currentUser.username] = [];
+      if (!friends[currentUser.username].includes(inviter)) friends[currentUser.username].push(inviter);
+      if (!friends[inviter]) friends[inviter] = [];
+      if (!friends[inviter].includes(currentUser.username)) friends[inviter].push(currentUser.username);
+      // Einladung löschen
+      friendInvites[currentUser.username] = friendInvites[currentUser.username].filter(name => name !== inviter);
+      saveFriends();
+      saveFriendInvites();
+      refreshFriendsList();
+      refreshFriendInvites();
+    };
+    li.appendChild(acceptBtn);
+    friendInvitesEl.appendChild(li);
+  });
 }
 
-// ------------------ Peckman -------------------
-function peckmanApp() {
-  appContent.innerHTML = `
-    <canvas id="peckman-canvas" width="400" height="400"></canvas>
-    <p style="text-align:center; font-weight:bold;">Punkte: <span id="peckman-score">0</span></p>
-    <p style="text-align:center;">Steuerung: Pfeiltasten</p>
-  `;
-
-  const canvas = document.getElementById("peckman-canvas");
-  const ctx = canvas.getContext("2d");
-
-  const tileSize = 20;
-  const rows = 20;
-  const cols = 20;
-
-  let level = [
-    // 1=Wand, 2=Punkt, 0=leer
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-    [1,2,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,2,1],
-    [1,2,1,0,0,1,2,1,0,0,0,0,0,1,2,1,0,1,2,1],
-    [1,2,1,0,0,1,2,1,0,1,1,1,0,1,2,1,0,1,2,1],
-    [1,2,1,0,0,0,2,1,0,1,0,1,0,1,2,1,0,1,2,1],
-    [1,2,1,1,1,1,2,1,0,1,0,1,0,1,2,1,1,1,2,1],
-    [1,2,2,2,2,2,2,2,0,1,0,1,0,2,2,2,2,2,2,1],
-    [1,2,1,1,1,1,2,1,0,1,0,1,0,1,1,1,1,1,2,1],
-    [1,2,2,2,2,1,2,1,0,0,0,0,0,1,2,2,2,2,2,1],
-    [1,1,1,1,2,1,2,1,1,1,1,1,0,1,2,1,1,1,1,1],
-    [1,2,2,1,2,1,2,2,2,2,2,1,0,1,2,1,2,2,2,1],
-    [1,2,1,1,2,1,1,1,1,1,2,1,0,1,2,1,1,1,2,1],
-    [1,2,2,2,2,2,2,2,2,1,2,2,0,2,2,2,2,2,2,1],
-    [1,2,1,1,1,1,1,1,2,1,1,1,0,1,1,1,1,1,2,1],
-    [1,2,2,2,2,2,2,1,2,2,2,2,0,2,2,2,2,2,2,1],
-    [1,1,1,1,1,1,2,1,1,1,1,1,0,1,1,1,1,1,1,1],
-    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-    [1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-  ];
-
-  let pacman = {x:1, y:1, dir: 'right'};
-  let score = 0;
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    for(let y=0; y<rows; y++) {
-      for(let x=0; x<cols; x++) {
-        let tile = level[y][x];
-        if(tile === 1) {
-          ctx.fillStyle = 'blue';
-          ctx.fillRect(x*tileSize, y*tileSize, tileSize, tileSize);
-        } else if(tile === 2) {
-          ctx.fillStyle = 'white';
-          ctx.beginPath();
-          ctx.arc(x*tileSize + tileSize/2, y*tileSize + tileSize/2, 4, 0, Math.PI*2);
-          ctx.fill();
-        }
-      }
-    }
-
-    // Pacman zeichnen
-    ctx.fillStyle = 'yellow';
-    ctx.beginPath();
-    ctx.arc(pacman.x*tileSize + tileSize/2, pacman.y*tileSize + tileSize/2, tileSize/2 - 2, 0, Math.PI*2);
-    ctx.fill();
+// --- Einstellungen App ---
+const saveSettingsBtn = document.getElementById("save-settings-btn");
+saveSettingsBtn.addEventListener("click", () => {
+  const newUsername = document.getElementById("settings-username").value.trim();
+  const newPassword = document.getElementById("settings-password").value.trim();
+  // Hintergrundfarbe ist optional, hier nur Beispiel
+  if (!newUsername || !newPassword) {
+    alert("Benutzername und Passwort dürfen nicht leer sein.");
+    return;
   }
-
-  function canMove(x,y) {
-    return level[y] && level[y][x] !== 1;
+  // Prüfen, ob Benutzername schon existiert (außer aktuell)
+  if (users.some(u => u.username === newUsername && u !== currentUser)) {
+    alert("Benutzername existiert bereits.");
+    return;
   }
+  // Update user
+  currentUser.username = newUsername;
+  currentUser.password = newPassword;
+  saveUsers();
+  alert("Einstellungen gespeichert. Bitte neu einloggen.");
+  location.reload();
+});
 
-  function movePacman() {
-    let nx = pacman.x;
-    let ny = pacman.y;
+// --- Game Hub ---
+const gameHub = document.getElementById("gamehub-app");
+gameHub.addEventListener("click", e => {
+  const gameIcon = e.target.closest(".game-icon");
+  if (!gameIcon) return;
+  const game = gameIcon.getAttribute("data-game");
+  openGame(game);
+});
 
-    switch(pacman.dir) {
-      case 'up': ny--; break;
-      case 'down': ny++; break;
-      case 'left': nx--; break;
-      case 'right': nx++; break;
-    }
+const gamesContainer = document.getElementById("games-container");
 
-    if(canMove(nx, ny)) {
-      pacman.x = nx;
-      pacman.y = ny;
-
-      if(level[ny][nx] === 2) {
-        level[ny][nx] = 0;
-        score++;
-        document.getElementById('peckman-score').textContent = score;
-      }
-    }
+function openGame(gameName) {
+  hideAllApps();
+  gamesContainer.style.display = "block";
+  desktop.style.display = "none";
+  hideAllGames();
+  if (gameName === "tictactoe") {
+    document.getElementById("tictactoe-game").style.display = "block";
+    initTicTacToe();
+  } else if (gameName === "peckman") {
+    document.getElementById("peckman-game").style.display = "block";
+    initPeckman();
+  } else if (gameName === "fakeminecraft") {
+    document.getElementById("fakeminecraft-game").style.display = "block";
+    initFakeMinecraft();
+  } else if (gameName === "fakeclashroyale") {
+    alert("Fake Clash Royale kommt bald!");
+  } else if (gameName === "fakefortnite") {
+    alert("Fake Fortnite kommt bald!");
   }
-
-  window.onkeydown = e => {
-    switch(e.key) {
-      case 'ArrowUp': pacman.dir = 'up'; break;
-      case 'ArrowDown': pacman.dir = 'down'; break;
-      case 'ArrowLeft': pacman.dir = 'left'; break;
-      case 'ArrowRight': pacman.dir = 'right'; break;
-    }
-  };
-
-  function gameLoop() {
-    movePacman();
-    draw();
-  }
-
-  score = 0;
-  document.getElementById('peckman-score').textContent = score;
-  draw();
-
-  clearInterval(window.peckmanInterval);
-  window.peckmanInterval = setInterval(gameLoop, 200);
 }
+
+function hideAllGames() {
+  document.querySelectorAll(".game").forEach(g => (g.style.display = "none"));
+}
+
+// --- Tic Tac Toe Spiel ---
+const tictactoeBoard = document.getElementById("tictactoe-board");
+const tictactoeStatus = document.getElementById("tictactoe-status");
+const tictactoeReset = document.getElementById("tictactoe-reset");
+
+let tttBoardState = ["", "", "", "", "", "", "", "", ""];
+let tttCurrentPlayer = "X";
+let tttGameActive = true;
+
+function initTicTacToe() {
+  tttBoardState = ["", "", "", "", "", "", "", "", ""];
+  tttCurrentPlayer = "X";
+  tttGameActive = true;
+  tictactoeStatus.textContent = `Spieler ${tttCurrentPlayer} ist dran`;
+  tictactoeBoard.innerHTML = "";
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement("div");
+    cell.addEventListener("click", () => ticTacToeCellClicked(i));
+    tictactoeBoard.appendChild(cell);
+  }
+}
+
+function ticTacToeCellClicked(index) {
+  if (!tttGameActive || tttBoardState[index] !== "") return;
+  tttBoardState[index] = tttCurrentPlayer;
+  updateTicTacToeBoard();
+  if (checkTicTacToeWin()) {
+    tictactoeStatus.textContent = `Spieler ${tttCurrentPlayer} gewinnt!`;
+    tttGameActive = false;
+    return;
+  }
+  if (tttBoardState.every(cell => cell !== "")) {
+    tictactoeStatus.textContent = "Unentschieden!";
+    tttGameActive = false;
+    return;
+  }
+  tttCurrentPlayer = tttCurrentPlayer === "X" ? "O" : "X";
+  tictactoeStatus.textContent = `Spieler ${tttCurrentPlayer} ist dran`;
+}
+
+function updateTicTacToeBoard() {
+  tictactoeBoard.childNodes.forEach((cell, idx) => {
+    cell.textContent = tttBoardState[idx];
