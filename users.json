@@ -1,0 +1,5 @@
+[
+  { "username": "OwnerMatteo", "password": "B2009-RvMJ", "role": "owner" },
+  { "username": "PA-Bea", "password": "2025!Admin", "role": "admin" },
+  { "username": "player1", "password": "test123", "role": "user" }
+]
