@@ -1,44 +1,109 @@
 body {
-  margin: 0;
-  font-family: sans-serif;
-  background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb') no-repeat center center fixed;
-  background-size: cover;
-  color: white;
-  text-align: center;
+  background: linear-gradient(to bottom, #001a00 0%, #004d00 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #b3ffb3;
+  margin: 0; padding: 0;
+  user-select: none;
 }
 
 .hidden {
   display: none;
 }
 
-#startscreen {
-  margin-top: 30vh;
-  animation: fadeOut 3s forwards;
+#login-screen {
+  max-width: 300px;
+  margin: 80px auto;
+  padding: 20px;
+  background: #003300;
+  border: 3px solid #00ff00;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px #00ff00;
 }
 
-@keyframes fadeOut {
-  0% {opacity: 1;}
-  90% {opacity: 1;}
-  100% {opacity: 0; display: none;}
+#login-screen input {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 2px solid limegreen;
+  border-radius: 5px;
+  background: black;
+  color: limegreen;
+  font-weight: bold;
+  font-size: 1em;
+  outline: none;
+  transition: box-shadow 0.3s ease;
+  box-shadow: 0 0 8px limegreen;
 }
 
-.desktop-icons {
+#login-screen input:focus {
+  box-shadow: 0 0 15px #00ff00;
+  border-color: #00ff00;
+}
+
+#login-btn {
+  padding: 10px 20px;
+  background: limegreen;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 8px limegreen;
+}
+
+#login-btn:hover {
+  background: #00cc00;
+}
+
+#desktop {
+  padding: 20px;
+  text-align: center;
+}
+
+#icons {
   display: flex;
   justify-content: center;
+  gap: 30px;
   flex-wrap: wrap;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .icon {
-  background: rgba(0,0,0,0.5);
-  border: 1px solid white;
-  border-radius: 10px;
-  margin: 10px;
-  padding: 10px;
-  width: 100px;
+  width: 90px;
+  height: 90px;
+  background: #003300;
+  border: 2px solid limegreen;
+  border-radius: 15px;
+  box-shadow: 0 0 10px limegreen;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: limegreen;
+  font-size: 1.6em;
   cursor: pointer;
+  user-select: none;
+  transition: background 0.3s ease;
 }
 
-#error {
-  color: red;
+.icon:hover {
+  background: #006600;
+}
+
+#app-window {
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 420px;
+  height: 480px;
+  background: #002200;
+  border: 3px solid limegreen;
+  border-radius: 10px;
+  box-shadow: 0 0 20px limegreen;
+  padding: 40px 20px 20px 20px;
+  color: limegreen;
+  overflow: auto;
+  z-index: 1000;
+  user-select: none;
 }
